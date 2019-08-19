@@ -318,6 +318,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         }
 
         response.setCode(-1);
+        // 检查消息是否合理 send-zjw
         super.msgCheck(ctx, requestHeader, response);
         if (response.getCode() != -1) {
             return response;
@@ -361,6 +362,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             }
             putMessageResult = this.brokerController.getTransactionalMessageService().prepareMessage(msgInner);
         } else {
+            // 消息存储 send-zjw
             putMessageResult = this.brokerController.getMessageStore().putMessage(msgInner);
         }
 

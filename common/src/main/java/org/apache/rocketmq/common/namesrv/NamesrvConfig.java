@@ -16,6 +16,8 @@
  */
 
 /**
+ *
+ * nameServer  配置
  * $Id: NamesrvConfig.java 1839 2013-05-16 02:12:02Z vintagewang@apache.org $
  */
 package org.apache.rocketmq.common.namesrv;

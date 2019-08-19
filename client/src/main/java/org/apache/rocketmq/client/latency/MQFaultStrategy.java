@@ -26,6 +26,9 @@ public class MQFaultStrategy {
     private final static InternalLogger log = ClientLogger.getLog();
     private final LatencyFaultTolerance<String> latencyFaultTolerance = new LatencyFaultToleranceImpl();
 
+    /**
+     * 且用broker故障延迟机制 send-zjw
+     */
     private boolean sendLatencyFaultEnable = false;
 
     private long[] latencyMax = {50L, 100L, 550L, 1000L, 2000L, 3000L, 15000L};
@@ -64,12 +67,15 @@ public class MQFaultStrategy {
                     if (pos < 0)
                         pos = 0;
                     MessageQueue mq = tpInfo.getMessageQueueList().get(pos);
+                    // 验证消息队列是否可用 send-zjw
                     if (latencyFaultTolerance.isAvailable(mq.getBrokerName())) {
                         if (null == lastBrokerName || mq.getBrokerName().equals(lastBrokerName))
                             return mq;
+                        // 如果lastbroker不为null ，不会执行到
                     }
                 }
 
+                //
                 final String notBestBroker = latencyFaultTolerance.pickOneAtLeast();
                 int writeQueueNums = tpInfo.getQueueIdByBroker(notBestBroker);
                 if (writeQueueNums > 0) {

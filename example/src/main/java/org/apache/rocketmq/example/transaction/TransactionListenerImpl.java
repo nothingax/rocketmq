@@ -31,6 +31,9 @@ public class TransactionListenerImpl implements TransactionListener {
 
     @Override
     public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
+
+        System.out.println("执行本地事务： executeLocalTransaction >>>>>>>>> ");
+
         int value = transactionIndex.getAndIncrement();
         int status = value % 3;
         localTrans.put(msg.getTransactionId(), status);

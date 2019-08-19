@@ -26,8 +26,17 @@ public class Message implements Serializable {
     private static final long serialVersionUID = 8445773977080406428L;
 
     private String topic;
+    /**
+     * 消息flag RocketMQ不做处理
+     */
     private int flag;
+    /**
+     * 扩展属性
+     */
     private Map<String, String> properties;
+    /**
+     * 消息体
+     */
     private byte[] body;
     private String transactionId;
 

@@ -41,6 +41,12 @@ import org.apache.rocketmq.srvutil.ServerUtil;
 import org.apache.rocketmq.srvutil.ShutdownHookThread;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Namesrv 启动
+ * 解析配置文件
+ * 创建实例
+ * 加载kv配置，开启两个定时任务
+ */
 public class NamesrvStartup {
 
     private static InternalLogger log;
@@ -55,6 +61,8 @@ public class NamesrvStartup {
 
         try {
             NamesrvController controller = createNamesrvController(args);
+
+            // 创建nameserverController 实例
             start(controller);
             String tip = "The Name Server boot success. serializeType=" + RemotingCommand.getSerializeTypeConfigInThisServer();
             log.info(tip);
@@ -69,9 +77,11 @@ public class NamesrvStartup {
     }
 
     public static NamesrvController createNamesrvController(String[] args) throws IOException, JoranException {
+
         System.setProperty(RemotingCommand.REMOTING_VERSION_KEY, Integer.toString(MQVersion.CURRENT_VERSION));
         //PackageConflictDetect.detectFastjson();
 
+        // 通过命令行或配置文件的形式解析配置namesrvConfig 和 nettyServerConfig
         Options options = ServerUtil.buildCommandlineOptions(new Options());
         commandLine = ServerUtil.parseCmdLine("mqnamesrv", args, buildCommandlineOptions(options), new PosixParser());
         if (null == commandLine) {
@@ -137,12 +147,14 @@ public class NamesrvStartup {
             throw new IllegalArgumentException("NamesrvController is null");
         }
 
+        // 创建nameserverController 实例
         boolean initResult = controller.initialize();
         if (!initResult) {
             controller.shutdown();
             System.exit(-3);
         }
 
+        // 注册jvm钩子函数
         Runtime.getRuntime().addShutdownHook(new ShutdownHookThread(log, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -151,6 +163,7 @@ public class NamesrvStartup {
             }
         }));
 
+        // 启动服务器
         controller.start();
 
         return controller;

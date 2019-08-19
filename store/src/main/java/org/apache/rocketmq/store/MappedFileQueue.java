@@ -195,10 +195,12 @@ public class MappedFileQueue {
         long createOffset = -1;
         MappedFile mappedFileLast = getLastMappedFile();
 
+        // 首次创建文件，计算文件的起始偏移量 store-zjw
         if (mappedFileLast == null) {
             createOffset = startOffset - (startOffset % this.mappedFileSize);
         }
 
+        // 已存在文件，根据最后一个文件的偏移量加上文件的大小计算出新文件的偏移量  store-zjw
         if (mappedFileLast != null && mappedFileLast.isFull()) {
             createOffset = mappedFileLast.getFileFromOffset() + this.mappedFileSize;
         }
@@ -210,6 +212,7 @@ public class MappedFileQueue {
             MappedFile mappedFile = null;
 
             if (this.allocateMappedFileService != null) {
+                // 创建mappedFile store-zjw
                 mappedFile = this.allocateMappedFileService.putRequestAndReturnMappedFile(nextFilePath,
                     nextNextFilePath, this.mappedFileSize);
             } else {
